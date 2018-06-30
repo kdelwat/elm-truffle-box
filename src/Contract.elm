@@ -1,10 +1,11 @@
 module Contract exposing (get, set)
 
+import BigInt exposing (BigInt)
+import Eth.Types exposing (Address, Call)
 import Eth.Units
 import Evm.Decode as Evm
 import Evm.Encode as Evm
-import Eth.Types exposing (Call, Address)
-import BigInt exposing (BigInt)
+
 
 get : Address -> Call BigInt
 get contractAddress =
@@ -15,7 +16,9 @@ get contractAddress =
     , value = Nothing
     , data = Just <| Evm.encodeFunctionCall "get()" []
     , nonce = Nothing
-    , decoder = Evm.toElmDecoder Evm.uint}
+    , decoder = Evm.toElmDecoder Evm.uint
+    }
+
 
 set : Address -> Maybe Address -> BigInt -> Call Bool
 set contractAddress account value =
@@ -24,8 +27,7 @@ set contractAddress account value =
     , gas = Nothing
     , gasPrice = Just <| Eth.Units.gwei 4
     , value = Nothing
-    , data = Just <| Evm.encodeFunctionCall "set(uint256)" [Evm.UintE value]
+    , data = Just <| Evm.encodeFunctionCall "set(uint256)" [ Evm.UintE value ]
     , nonce = Nothing
     , decoder = Evm.toElmDecoder Evm.bool
     }
-
