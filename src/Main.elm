@@ -16,6 +16,12 @@ import BigInt exposing (BigInt)
 import Task
 import Http
 
+ethNodeAddress : String
+ethNodeAddress = "http://localhost:9545"
+
+contractAddress : Address
+contractAddress = Eth.Utils.unsafeToAddress "0x345ca3e014aaf5dca488057592ee47305d9b3e10"
+
 main : Program Never Model Msg
 main =
     Html.program
@@ -25,10 +31,8 @@ main =
         , subscriptions = subscriptions
     }
 
-
 type alias Model = {
     txSentry : TxSentry Msg,
-    txReceipt : Maybe TxReceipt,
     ethNode : HttpProvider,
     inputValue : String,
     number : String,
@@ -36,8 +40,6 @@ type alias Model = {
     messages : List String
 }
 
-ethNodeAddress : String
-ethNodeAddress = "http://localhost:9545"
 
 modelInitialValue : Model
 modelInitialValue =
@@ -46,7 +48,6 @@ modelInitialValue =
     , number = ""
     , account = Nothing
     , txSentry = TxSentry.init (txOut, txIn) TxSentryMsg ethNodeAddress
-    , txReceipt = Nothing
     , messages = []
     }
 
@@ -83,10 +84,8 @@ update msg model =
         SetValue value ->
             let
                 newValue = Maybe.withDefault (BigInt.fromInt 0) (BigInt.fromString value)
-            
-                contract = Eth.Utils.unsafeToAddress "0x345ca3e014aaf5dca488057592ee47305d9b3e10"
-                
-                params = set contract newValue
+                            
+                params = set contractAddress model.account newValue
                 
                 (newSentry, sentryCmd) =
                     TxSentry.customSend
@@ -139,7 +138,7 @@ init =
 getValue : String -> Cmd Msg
 getValue node =
     let
-        call = get (Eth.Utils.unsafeToAddress "0x345ca3e014aaf5dca488057592ee47305d9b3e10")
+        call = get contractAddress
     in
         Eth.call node call
             |> Task.attempt ReceiveNumber
@@ -155,18 +154,10 @@ get contractAddress =
     , nonce = Nothing
     , decoder = Evm.toElmDecoder Evm.uint}
 
-setValue : String -> BigInt -> Cmd Msg
-setValue node value =
-    let
-        call = set (Eth.Utils.unsafeToAddress "0x345ca3e014aaf5dca488057592ee47305d9b3e10") value
-    in
-        Eth.sendTx node (Eth.toSend call)
-            |> Task.attempt ReceiveSetResult
-
-set : Address -> BigInt -> Call Bool
-set contractAddress value =
+set : Address -> Maybe Address -> BigInt -> Call Bool
+set contractAddress account value =
     { to = Just contractAddress
-    , from = Just (Eth.Utils.unsafeToAddress "0x627306090abab3a6e1400e9345bc60c78a8bef57")
+    , from = account
     , gas = Nothing
     , gasPrice = Just <| Eth.Units.gwei 4
     , value = Nothing
