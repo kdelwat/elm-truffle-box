@@ -1,17 +1,9 @@
-# Blueprint Truffle Box
+# Elm Truffle Box
 
-This box comes with everything you need to create your own Truffle Box.
+This box helps you get started building dApps with Truffle and Elm, using the [Elm Ethereum](https://github.com/cmditch/elm-ethereum) library.
 
-## Getting Started
+To build your Elm app, edit the code in `src/`, then run `elm-make src/Main.elm --ouput build/elm.js`.
 
-After adding your libraries and code:
+To test your app, you can use `http-server` (`npm install -g http-server`) to serve the it: `http-server build`.
 
-1. Delete `box-img-sm.png` and `box-img-lg.png`.
-
-2. Use `box-img-sm-template.png` and `box-img-lg-template.png` to create your own art.
-
-3. Delete the template images and replace them with your art. Be sure your art's filenames don't have -template in them.
-
-4. Customize the box configuration file (`box-config.json`) if necessary.
-
-See [the Truffle Box section of our documentation](http://truffleframework.com/) for more info.
+The Elm boilerplate in this repository is modified from the examples by cmditch in the Elm Ethereum repository.
