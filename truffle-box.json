@@ -6,9 +6,10 @@
   "commands": {
     "Compile contracts": "truffle compile",
     "Migrate contracts": "truffle migrate",
-    "Test contracts": "truffle test"
+    "Test contracts": "truffle test",
+    "Compile Elm app": "elm-make src/Main.elm --ouput build/elm.js"
   },
   "hooks": {
-    "post-unpack": ""
+    "post-unpack": "mkdir build && cp src/index.html build/"
   }
 }
